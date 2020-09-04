@@ -1,0 +1,36 @@
+stages:
+  - build
+  - test
+
+build:
+  tags:
+    - docker
+  image: registry.gitlab.com/kapsa/recorder-service:latest
+  stage: build 
+  script:
+    - mkdir -p build && cd build
+    - cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON && make -j"$CORE_NUMBERS"
+  artifacts:
+    paths:
+      - build
+    expire_in: 1 day
+
+unittests:
+  tags:
+    - docker
+  image: registry.gitlab.com/kapsa/recorder-service:latest
+  stage: test
+  dependencies:
+    - build
+  script:
+    - cd build
+    - GST_DEBUG=3 CATCH2_ARGS="--random-output" ctest --output-on-failure
+    - echo "testing finished"
+  artifacts:
+    when: on_failure
+    paths:
+      - ./build/junit.xml
+    expire_in: 1 day
+    reports:
+      junit: ./build/junit.xml
+
