@@ -1,0 +1,31 @@
+BasedOnStyle: WebKit
+
+BraceWrapping:
+  AfterClass: true
+  AfterEnum: true
+  AfterStruct: true
+  AfterFunction: true
+  BeforeElse: true
+  BeforeCatch: true
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Custom
+BreakBeforeTernaryOperators: true
+IndentWrappedFunctionNames: true
+ColumnLimit: 0
+NamespaceIndentation: Inner
+SortIncludes: true
+IncludeCategories:
+  - Regex:           '<catch2/catch\.hpp>'
+    Priority:        -5
+  - Regex:           '^"[A-Z][[:alnum:]._-]+/'
+    Priority:        2
+  - Regex:           '^<[A-Z][[:alnum:]._-]+/'
+    Priority:        3
+  - Regex:           '^<([[:alnum:]._-]+)/'
+    Priority:        4
+  - Regex:           '^<[[:alnum:]._-]+>'
+    Priority:        5
+  - Regex:           '^<[[:alnum:]._-]+>'
+    Priority:        6
+  - Regex:           '.*'
+    Priority:        1

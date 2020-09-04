@@ -1,0 +1,12 @@
+{
+  "config": {
+    "recorder": {
+      "record_location": "/tmp/recorder_service/records"
+    },
+    "encoder_mix_recording": {
+      "encoder": "x264enc bitrate=6000 speed-preset=ultrafast tune=zerolatency",
+      "in_caps": "video/x-raw,format=I420",
+      "out_caps": "video/x-h264,width=1920,height=1080,framerate=30/1,profile=baseline"
+    }
+  }
+}

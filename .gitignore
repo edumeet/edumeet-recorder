@@ -1,0 +1,4 @@
+!.idea/
+.idea/*
+!.idea/dictionaries
+cmake-build-debug
