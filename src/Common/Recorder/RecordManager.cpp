@@ -11,10 +11,6 @@
 
 namespace rec {
 
-namespace {
-    static int REC_COUNTER = 0;
-}
-
 CRecordManager::CRecordManager()
     : m_workDir(CConfigParser::root()["/config/recorder/record_location"_json_pointer].get<std::string>())
 {
@@ -29,7 +25,8 @@ CRecordManager& CRecordManager::getInstance()
 std::optional<ID> CRecordManager::startRecording(int rtpPort, int rtcpPort)
 {
     if (auto rec = std::make_unique<rec::CRecorder>(m_workDir); rec->start(rtpPort, rtcpPort)) {
-        ID id(++REC_COUNTER);
+        static std::atomic<int> counter(0);
+        const ID id { ++counter };
         m_recorders.try_emplace(id, std::move(rec));
         return id;
     }
@@ -43,10 +40,9 @@ std::optional<std::filesystem::path> CRecordManager::stopRecording(ID id)
     if (!m_recorders.contains(id)) {
         return std::nullopt;
     }
-    auto [status, path] = m_recorders.at(id)->stop();
-    if (status) {
+    if (auto& recorder = m_recorders.at(id); recorder->stop()) {
         //m_recorders.erase(id); //TODO when erase stopped recorders?
-        return path;
+        return recorder->getPath();
     }
     else {
         std::cout << "stopRecording error\n";
@@ -58,7 +54,7 @@ nlohmann::json CRecordManager::staus()
 {
     nlohmann::json json;
     for (auto& [id, recorder] : m_recorders) {
-        json.push_back({ { "id", id.t }, { "running", recorder->isRunning() } });
+        json.push_back({ { "id", id.t }, { "running", recorder->isRunning() }, { "path", recorder->getPath() } });
     }
     return json;
 }

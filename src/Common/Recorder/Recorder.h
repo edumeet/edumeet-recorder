@@ -16,11 +16,12 @@ namespace rec {
 class CRecorder
 {
 public:
-    explicit CRecorder(std::filesystem::path  workdir);
+    explicit CRecorder(std::filesystem::path workdir);
     bool start(int rtpPort, int rtcpPort);
     bool start(const std::string& uri);
+    std::filesystem::path getPath();
     bool isRunning();
-    std::tuple<bool, std::filesystem::path> stop();
+    bool stop();
     virtual ~CRecorder();
 
 private:
@@ -28,7 +29,7 @@ private:
     std::unique_ptr<CPipeline> m_pipeline;
     std::filesystem::path m_workdir;
     std::filesystem::path m_recPath;
-    std::mutex m_mtx;
+    std::recursive_mutex m_mtx;
 };
 }
 

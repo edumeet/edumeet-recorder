@@ -65,14 +65,15 @@ bool CRecorder::start(int rtpPort, int rtcpPort)
     return m_pipeline->start();
 }
 
-std::tuple<bool, std::filesystem::path> CRecorder::stop()
+bool CRecorder::stop()
 {
     std::unique_lock lock(m_mtx);
     if (!m_pipeline || (m_pipeline && !m_pipeline->isRunning())) {
-        return { true, m_recPath };
+        return true;
     }
-    return { m_pipeline->stop("mux"), m_recPath };
+    return m_pipeline->stop("mux");
 }
+
 bool CRecorder::isRunning()
 {
     std::unique_lock lock(m_mtx);
@@ -80,6 +81,15 @@ bool CRecorder::isRunning()
         return false;
     }
     return m_pipeline->isRunning();
+}
+
+std::filesystem::path CRecorder::getPath()
+{
+    std::unique_lock lock(m_mtx);
+    if (m_pipeline && m_pipeline->isRunning()) {
+        return {};
+    }
+    return m_recPath;
 }
 
 }
