@@ -8,8 +8,12 @@ include_directories(${GSTREAMER_INCLUDE_DIRS})
 find_package(fmt)
 
 set(SRC
-        Recorder.h
-        Recorder.cpp
+        IRecorder.h
+        IRecorder.cpp
+        RtpRecorder.h
+        RtpRecorder.cpp
+        UriRecorder.h
+        UriRecorder.cpp
         RecordManager.cpp
         RecordManager.h
         )

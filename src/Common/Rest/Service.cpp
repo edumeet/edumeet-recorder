@@ -32,14 +32,25 @@ void CService::handleGet(http_request message)
     }
 
     if (msg::STATUS == paths[0]) {
-        if (auto status = rec::CRecordManager::getInstance().staus(); status.empty()) {
+        if (auto status = rec::CRecordManager::getInstance().status(); status.empty()) {
             message.reply(status_codes::OK);
+            return;
         }
         else {
             auto response = json::value::parse(status.dump());
             message.reply(status_codes::OK, response);
+            return;
         }
     }
+
+    if (msg::GET_RECORDS == paths[0]) {
+        rec::ID id(message.extract_json().get().at("id").as_integer());
+        auto records = rec::CRecordManager::getInstance().getRecords(id);
+        auto response = json::value::parse(records.dump());
+        message.reply(status_codes::OK, response);
+        return;
+    }
+
     message.reply(status_codes::BadRequest);
 }
 
@@ -54,33 +65,34 @@ void CService::handlePost(http_request message)
 
     if (msg::START == paths[0]) {
         auto json = message.extract_json().get();
-        auto rtpPort(json.at("port").as_integer());
-        auto rtcpPort(json.at("rtcpPort").as_integer());
-        auto id = rec::CRecordManager::getInstance().startRecording(rtpPort, rtcpPort);
+        auto id = rec::CRecordManager::getInstance().start(json.serialize().data());
         if (id.has_value()) {
             auto response = json::value::object();
             response["status"] = json::value::string("started");
             message.reply(status_codes::OK, response);
+            return;
         }
         else {
             auto error = json::value::object();
             error["error"] = json::value::string("Unable to start recording.");
             message.reply(status_codes::InternalError, error);
+            return;
         }
     }
 
     if (msg::STOP == paths[0]) {
         rec::ID id(message.extract_json().get().at("id").as_integer());
-        if (auto path = rec::CRecordManager::getInstance().stopRecording(id); path.has_value()) {
+        if (rec::CRecordManager::getInstance().stop(id)) {
             auto response = json::value::object();
             response["status"] = json::value::string("stopped");
-            response["path"] = json::value::string(path.value());
             message.reply(status_codes::OK, response);
+            return;
         }
         else {
             auto error = json::value::object();
             error["error"] = json::value::string("Unable to stop recording.");
             message.reply(status_codes::InternalError, error);
+            return;
         }
     }
 
