@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_ENABLE_ALL_STRINGMAKERS
 
 #include <catch2/catch.hpp>
-#include <Recorder/Recorder.h>
+#include <Recorder/RtpRecorder.h>
 #include <fmt/core.h>
 #include <chrono>
 #include <thread>
@@ -35,22 +35,28 @@ struct Sender
     GstElement* m_pipe;
 };
 
+nlohmann::json params_json = R"({
+  "rtpPort": 5000,
+  "rtcpPort": 5001
+})"_json;
+
 SCENARIO("Recorder start/stop test")
 {
     using namespace rec;
-    CRecorder recorder("/tmp/abcDEFghi_rec_test");
+    auto params = params_json.get<CRtpRecorder::Params>();
+    CRtpRecorder recorder("/tmp/abcDEFghi_rec_test", params);
     {
         auto ret = recorder.stop();
         CHECK(ret);
         auto start = std::chrono::steady_clock::now();
-        CHECK(recorder.start(RTP_PORT, RTCP_PORT));
+        CHECK(recorder.start());
         auto stop = std::chrono::steady_clock::now();
         auto timeout = std::chrono::duration_cast<std::chrono::seconds>(stop - start).count();
         CHECK(9 < timeout);
         CHECK(15 > timeout);
         Sender s;
-        CHECK(recorder.start(RTP_PORT, RTCP_PORT));
-        CHECK(recorder.start(RTP_PORT, RTCP_PORT));
+        CHECK(recorder.start());
+        CHECK(recorder.start());
     }
     {
         auto ret = recorder.stop();
@@ -70,45 +76,53 @@ SCENARIO("Recorder record test")
     Sender sender;
     fs::path workdir = "/tmp/test_rec_ABC";
     fs::remove_all(workdir);
+    auto params = params_json.get<CRtpRecorder::Params>();
     auto counter = [&]() { return std::count_if(fs::directory_iterator(workdir), {}, [](fs::path p) { return fs::is_regular_file(p); }); };
     {
-        CRecorder recorder(workdir);
+        CRtpRecorder recorder(workdir, params);
         CHECK(0 == counter());
-        auto path = recorder.getPath();
-        CHECK(path.empty());
-        auto started = recorder.start(RTP_PORT, RTCP_PORT);
-        path = recorder.getPath();
-        CHECK(path.empty());
+        auto records = recorder.getRecords();
+        CHECK(records.empty());
+        auto started = recorder.start();
+        records = recorder.getRecords();
+        CHECK(records.empty());
         CHECK(started);
         std::this_thread::sleep_for(std::chrono::seconds(3));
         auto stopped = recorder.stop();
         CHECK(stopped);
-        path = recorder.getPath();
-        CHECK(!path.empty());
-        CHECK(path.parent_path() == workdir);
-        CHECK(fs::exists(path));
-        CHECK(fs::is_regular_file(path));
-        CHECK(fs::file_size(path) > 0);
-        started = recorder.start(RTP_PORT, RTCP_PORT);
+        records = recorder.getRecords();
+        CHECK(!records.empty());
+        auto firstRecord = records[0];
+        CHECK(firstRecord.parent_path() == workdir);
+        CHECK(fs::exists(firstRecord));
+        CHECK(fs::is_regular_file(firstRecord));
+        CHECK(fs::file_size(firstRecord) > 0);
+        started = recorder.start();
         CHECK(started);
         std::this_thread::sleep_for(std::chrono::seconds(3));
         CHECK(2 == counter());
+        stopped = recorder.stop();
+        CHECK(stopped);
+        records = recorder.getRecords();
+        CHECK(!records.empty());
+        CHECK(records.size() == 2);
     }
     {
         workdir = "/tmp/test_rec_DEF";
         fs::remove_all(workdir);
-        CRecorder recorder(workdir);
-        auto started = recorder.start(RTP_PORT, RTCP_PORT);
+        CRtpRecorder recorder(workdir, params);
+        auto started = recorder.start();
         CHECK(started);
         std::this_thread::sleep_for(std::chrono::seconds(3));
         auto stopped = recorder.stop();
         CHECK(stopped);
-        auto path = recorder.getPath();
-        CHECK(!path.empty());
-        CHECK(path.parent_path() == workdir);
-        CHECK(fs::exists(path));
-        CHECK(fs::is_regular_file(path));
-        CHECK(fs::file_size(path) > 0);
+        auto records = recorder.getRecords();
+        CHECK(!records.empty());
+        auto firstRecord = records[0];
+        CHECK(firstRecord.parent_path() == workdir);
+        CHECK(fs::exists(firstRecord));
+        CHECK(fs::is_regular_file(firstRecord));
+        CHECK(fs::file_size(firstRecord) > 0);
         CHECK(1 == counter());
     }
 }

@@ -1,3 +1,4 @@
+build/
 !.idea/
 .idea/*
 !.idea/dictionaries

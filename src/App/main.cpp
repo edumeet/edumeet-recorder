@@ -25,6 +25,9 @@ void initService(const std::string &address) {
 
 int main() {
     gst_init(nullptr, nullptr);
+    if (std::getenv("GST_DEBUG") == nullptr) {
+        gst_debug_set_default_threshold(GST_LEVEL_WARNING);
+    }
     CConfigParser::getInstance().init(boost::dll::program_location().parent_path().string() + "/config.json");
 
     std::string address = "http://localhost:34568";

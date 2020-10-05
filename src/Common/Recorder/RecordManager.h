@@ -6,15 +6,16 @@
 #ifndef RECORDER_SERVICE_CRECORDMANAGER_H
 #define RECORDER_SERVICE_CRECORDMANAGER_H
 
+#include <boost/serialization/strong_typedef.hpp>
 #include <nlohmann/json.hpp>
 #include <filesystem>
 #include <map>
 #include <memory>
-#include <boost/serialization/strong_typedef.hpp>
+#include <mutex>
 
 namespace rec {
 
-class CRecorder;
+class IRecorder;
 
 BOOST_STRONG_TYPEDEF(int, ID)
 
@@ -24,15 +25,20 @@ public:
     static CRecordManager& getInstance();
     CRecordManager(const CRecordManager&) = delete;
     CRecordManager& operator=(const CRecordManager&) = delete;
-    std::optional<ID> startRecording(int rtpPort, int rtcpPort);
-    std::optional<std::filesystem::path> stopRecording(ID id);
-    nlohmann::json staus();
+    std::optional<ID> start(const std::string& params);
+    bool stop(ID id);
+    nlohmann::json getRecords(ID id);
+    nlohmann::json status();
 
 private:
     CRecordManager();
     ~CRecordManager() = default;
-    std::map<ID, std::unique_ptr<rec::CRecorder>> m_recorders;
+    using RecPtr = std::unique_ptr<rec::IRecorder>;
+    ID add(RecPtr&&);
+    void rm(ID);
+    std::map<ID, RecPtr> m_recorders;
     std::filesystem::path m_workDir;
+    std::mutex m_mtx;
 };
 
 }
