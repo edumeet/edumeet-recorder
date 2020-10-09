@@ -5,7 +5,7 @@ stages:
 build:
   tags:
     - docker
-  image: registry.gitlab.com/kapsa/recorder-service:latest
+  image: registry.gitlab.com/kapsa/recorder-service/builder:latest
   stage: build 
   script:
     - mkdir -p build && cd build
@@ -18,7 +18,7 @@ build:
 unittests:
   tags:
     - docker
-  image: registry.gitlab.com/kapsa/recorder-service:latest
+  image: registry.gitlab.com/kapsa/recorder-service/builder:latest
   stage: test
   dependencies:
     - build
