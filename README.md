@@ -1,5 +1,13 @@
-**recorder-service API:**
+**installation**
 
+- get the image:  
+`docker pull registry.gitlab.com/kapsa/recorder-service/runner`
+
+- run the image (`--network=host` will be removed soon):  
+`docker run -v /tmp:/records --rm -it --network=host registry.gitlab.com/kapsa/recorder-service/runner`
+
+
+**recorder-service API:**
 
 - get status:  
 `curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://127.0.0.1:34568/api/status`  
@@ -14,7 +22,7 @@ return:
 
 
 - start html recordings:  
-`curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"bitrate":6000,"uri":"https://google.com"}}' -X POST http://127.0.0.1:34568/api/start`  
+`curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"bitrate":6000,"uri":"https://videojs.github.io/autoplay-tests/plain/attr/autoplay.html"}}' -X POST http://127.0.0.1:34568/api/start`  
 return:  
 `{"status":"started"}`
 
