@@ -25,20 +25,6 @@ IRecorder::IRecorder(std::filesystem::path workdir)
     }
 }
 
-IRecorder::~IRecorder()
-{
-    stop();
-}
-
-bool IRecorder::stop()
-{
-    std::unique_lock lock(m_mtx);
-    if (!m_pipeline || (m_pipeline && !m_pipeline->isRunning())) {
-        return true;
-    }
-    return m_pipeline->stop("mux");
-}
-
 bool IRecorder::isRunning()
 {
     std::unique_lock lock(m_mtx);

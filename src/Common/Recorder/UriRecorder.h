@@ -11,6 +11,12 @@
 
 namespace rec {
 
+struct Pulse
+{
+    std::string m_name;
+    std::string m_id;
+};
+
 class CHtmlRecorder : public IRecorder
 {
 public:
@@ -21,12 +27,14 @@ public:
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params, bitrate, uri)
     };
 
-    explicit CHtmlRecorder(std::filesystem::path workdir, Params  params);
+    explicit CHtmlRecorder(std::filesystem::path workdir, Params params);
     bool start() override;
+    bool stop() override;
     ~CHtmlRecorder() override = default;
 
 private:
     Params m_params;
+    const Pulse m_pulse;
 };
 
 }

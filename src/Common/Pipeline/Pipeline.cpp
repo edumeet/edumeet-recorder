@@ -51,9 +51,14 @@ bool CPipeline::start()
 bool CPipeline::stop(const std::string& eosElement)
 {
     std::unique_lock lock(m_mtx);
-    auto element = gst_bin_get_by_name(GST_BIN(m_pipeline), eosElement.c_str());
-    gst_element_send_event(element, gst_event_new_eos());
-    gst_object_unref(element);
+    if (eosElement.empty()) {
+        gst_element_send_event(m_pipeline, gst_event_new_eos());
+    }
+    else {
+        auto element = gst_bin_get_by_name(GST_BIN(m_pipeline), eosElement.c_str());
+        gst_element_send_event(element, gst_event_new_eos());
+        gst_object_unref(element);
+    }
     auto bus = gst_element_get_bus(m_pipeline);
     auto msg = gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE,
         static_cast<GstMessageType>(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));

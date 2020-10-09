@@ -1,8 +1,9 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
-#include <gst/gst.h>
+#include <Config/ConfigParser.h>
 #include <boost/dll/runtime_symbol_info.hpp>
-#include "../Common/Config/ConfigParser.h"
+#include <gst/gst.h>
+#include <atomic>
 
 int main(int argc, char* argv[])
 {
@@ -37,7 +38,7 @@ int main(int argc, char* argv[])
 
     std::atomic<int> outCount = 0;
     if (static_cast<int>(ro) > 0) {
-        session.configData().outputFilename += std::to_string(++outCount)+".xml";
+        session.configData().outputFilename += std::to_string(++outCount) + ".xml";
         session.configData().reporterName = "junit";
     }
 

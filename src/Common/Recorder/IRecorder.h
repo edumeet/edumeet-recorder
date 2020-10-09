@@ -24,11 +24,11 @@ class IRecorder
 {
 public:
     explicit IRecorder(std::filesystem::path workdir);
-    virtual ~IRecorder();
+    virtual ~IRecorder() = default;
     virtual bool start() = 0;
+    virtual bool stop() = 0;
     std::vector<std::filesystem::path> getRecords();
     bool isRunning();
-    bool stop();
 
 protected:
     std::string genFilename(const std::string& ext);

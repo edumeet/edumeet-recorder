@@ -23,6 +23,7 @@ public:
 
     explicit CRtpRecorder(std::filesystem::path workdir, const Params& params);
     bool start() override;
+    bool stop() override;
     ~CRtpRecorder() override = default;
 
 private:

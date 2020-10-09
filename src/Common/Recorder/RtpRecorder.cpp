@@ -36,4 +36,13 @@ bool CRtpRecorder::start()
     return m_pipeline->start();
 }
 
+bool CRtpRecorder::stop()
+{
+    std::unique_lock lock(m_mtx);
+    if (!m_pipeline || (m_pipeline && !m_pipeline->isRunning())) {
+        return true;
+    }
+    return m_pipeline->stop("mux");
+}
+
 }

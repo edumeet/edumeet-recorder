@@ -16,7 +16,7 @@ class CPipeline
 public:
     explicit CPipeline(std::string cmd);
     bool start();
-    bool stop(const std::string& eosElement);
+    bool stop(const std::string& eosElement = {});
     bool isRunning();
     template <typename... Args>
     void set(const std::string& element, Args&&... a);
