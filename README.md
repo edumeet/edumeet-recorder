@@ -1,10 +1,10 @@
 **installation**
 
-- get the image:  
-`docker pull registry.gitlab.com/kapsa/recorder-service/runner`
+- build the image:  
+`docker build -t edumeet-recorder .`
 
 - run the image (`--network=host` will be removed soon):  
-`docker run -v /tmp:/records --rm -it --network=host registry.gitlab.com/kapsa/recorder-service/runner`
+`docker run -v /tmp:/records --rm -it --network=host edumeet-recorder`
 
 
 **recorder-service API:**
