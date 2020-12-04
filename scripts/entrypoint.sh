@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 pulseaudio -D --verbose --exit-idle-time=-1 --system --disallow-exit
-/build/bin/recorder_service
+/build/bin/edumeet-recorder

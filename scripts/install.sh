@@ -1,5 +1,7 @@
 apt-get update && \
-DEBIAN_FRONTEND=noninteractive apt-get -y install sudo git meson ninja-build build-essential libwpe-1.0-dev  gtk-doc-tools apt-utils g++ gobjc++ liborc-0.4-dev x264 apt-utils pkg-config autoconf automake autotools-dev libtool libev-dev python3-dev libmount-dev nasm libva-dev libssl-dev libglfw3-dev libgles2-mesa-dev libpulse-dev gettext libgirepository1.0-dev libfaac-dev libopus-dev libvo-aacenc-dev libsrtp2-dev libusrsctp-dev libnice-dev libx11-xcb-dev libglu1-mesa-dev flex bison libxkbcommon-dev libwayland-egl-backend-dev libegl1-mesa-dev libgl1-mesa-dev libwayland-dev libglib2.0-dev wget cmake ruby libcairo2-dev libharfbuzz-dev libjpeg-dev libepoxy-dev libgcrypt20-dev libsoup2.4-dev libsqlite3-dev libwebp-dev libatk1.0-dev libatk-bridge2.0-dev libopenjp2-7-dev libwoff-dev libtasn1-6-dev libxslt1-dev libsystemd-dev python wayland-protocols xdg-dbus-proxy ccache weston libcpprest-dev libfmt-dev libvpx-dev bubblewrap libseccomp-dev gperf libevent-dev libalsa-ocaml-dev libavcodec-dev
+DEBIAN_FRONTEND=noninteractive apt-get -y install sudo git build-essential libwpe-1.0-dev  gtk-doc-tools apt-utils g++ gobjc++ liborc-0.4-dev x264 apt-utils pkg-config autoconf automake autotools-dev libtool libev-dev python3-dev libmount-dev nasm libva-dev libssl-dev libglfw3-dev libgles2-mesa-dev libpulse-dev gettext libgirepository1.0-dev libfaac-dev libopus-dev libvo-aacenc-dev libsrtp2-dev libusrsctp-dev libnice-dev libx11-xcb-dev libglu1-mesa-dev flex bison libxkbcommon-dev libwayland-egl-backend-dev libegl1-mesa-dev libgl1-mesa-dev libwayland-dev libglib2.0-dev wget cmake ruby libcairo2-dev libharfbuzz-dev libjpeg-dev libepoxy-dev libgcrypt20-dev libsoup2.4-dev libsqlite3-dev libwebp-dev libatk1.0-dev libatk-bridge2.0-dev libopenjp2-7-dev libwoff-dev libtasn1-6-dev libxslt1-dev libsystemd-dev python wayland-protocols xdg-dbus-proxy ccache weston libcpprest-dev libfmt-dev libvpx-dev bubblewrap libseccomp-dev gperf libevent-dev libalsa-ocaml-dev libavcodec-dev python3-pip
+ 
+pip3 install meson ninja
 
 CCACHE_DIR "/ccache"
 
@@ -42,7 +44,7 @@ cd /tmp && git clone --depth 1 --branch webkit-2.30 https://github.com/Igalia/we
     cd /tmp/WebKit && \
     cp /pulseaudio.patch . && git apply pulseaudio.patch && \
     cmake -DPORT=WPE -DENABLE_WEB_RTC=ON -DENABLE_MINIBROWSER=OFF -DCMAKE_BUILD_TYPE=Release -DENABLE_MEDIA_STREAM=ON -DENABLE_WPE_QT_API=OFF -GNinja . && \
-    ninja -j4 && ninja install && ldconfig && \
+    ninja && ninja install && ldconfig && \
     rm -rf /tmp/WebKit
 cd /tmp/gst-build &&  meson build --reconfigure && ninja -C build && meson install -C build && ldconfig && rm -rf /tmp/*
 
