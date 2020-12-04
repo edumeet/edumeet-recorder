@@ -31,7 +31,7 @@ public:
     bool isRunning();
 
 protected:
-    std::string genFilename(const std::string& ext);
+    std::string genFilename();
     std::unique_ptr<CPipeline> m_pipeline;
     std::filesystem::path m_workdir;
     std::vector<std::filesystem::path> m_recVec;

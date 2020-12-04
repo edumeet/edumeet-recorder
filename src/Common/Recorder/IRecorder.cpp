@@ -6,12 +6,12 @@
 #include "IRecorder.h"
 
 namespace rec {
-std::string IRecorder::genFilename(const std::string& ext)
+std::string IRecorder::genFilename()
 {
     auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::stringstream ss;
     static std::atomic<int> counter(0);
-    ss << std::put_time(std::localtime(&time), "%Y-%m-%d_%H:%M:%S") << "__" << std::to_string(counter++) << "." << ext;
+    ss << std::put_time(std::localtime(&time), "%Y-%m-%d_%H:%M:%S") << "__" << std::to_string(counter++);
     return m_workdir / ss.str();
 }
 
