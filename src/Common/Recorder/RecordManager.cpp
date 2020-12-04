@@ -32,6 +32,7 @@ CRecordManager& CRecordManager::getInstance()
 std::optional<ID> CRecordManager::start(const std::string& params)
 {
     auto data = nlohmann::json::parse(params);
+    std::cout << data.dump() << "\n";
     auto type = data.at("type");
     RecPtr rec = nullptr;
     if (type == type::RTP) { //TODO create factory

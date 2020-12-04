@@ -29,7 +29,7 @@ bool CRtpRecorder::start()
     if (m_pipeline && m_pipeline->isRunning()) {
         return true;
     }
-    auto file = genFilename("webm");
+    auto file = genFilename();
     m_recVec.emplace_back(file);
     auto cmd = fmt::format(PIPELINE_RTP, CAPS, m_params.rtpPort, m_params.rtcpPort, file);
     m_pipeline = std::make_unique<CPipeline>(cmd);

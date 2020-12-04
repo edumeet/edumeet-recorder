@@ -17,14 +17,22 @@ struct Pulse
     std::string m_id;
 };
 
+enum class EncoderType
+{
+    H264,
+    VP8
+};
+NLOHMANN_JSON_SERIALIZE_ENUM(EncoderType, { { EncoderType::H264, "h264" }, { EncoderType::VP8, "vp8" } })
+
 class CHtmlRecorder : public IRecorder
 {
 public:
     struct Params
     {
         int bitrate = 0;
-        std::string uri = {};
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params, bitrate, uri)
+        std::string uri {};
+        EncoderType encoder;
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params, bitrate, uri, encoder)
     };
 
     explicit CHtmlRecorder(std::filesystem::path workdir, Params params);
@@ -33,6 +41,7 @@ public:
     ~CHtmlRecorder() override = default;
 
 private:
+    std::string createCmd(Params, const std::string& pulseName, const std::string& location);
     Params m_params;
     const Pulse m_pulse;
 };
