@@ -63,7 +63,7 @@ Pulse createPulseSink()
 CHtmlRecorder::CHtmlRecorder(std::filesystem::path workdir, Params params)
     : IRecorder(std::move(workdir))
     , m_params(std::move(params))
- , m_pulse(createPulseSink())
+    , m_pulse(createPulseSink())
 {
     setenv("recorder_service_pulse_device_name", m_pulse.m_name.c_str(), 1);
 }

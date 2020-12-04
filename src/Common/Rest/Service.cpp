@@ -74,7 +74,7 @@ void CService::handlePost(http_request message)
         }
         else {
             auto error = json::value::object();
-            error["error"] = json::value::string("Unable to start recording.");
+            error["error"] = json::value::string("Unable to start recording. Missing or wrong parameters");
             message.reply(status_codes::InternalError, error);
             return;
         }

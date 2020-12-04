@@ -31,24 +31,30 @@ CRecordManager& CRecordManager::getInstance()
 
 std::optional<ID> CRecordManager::start(const std::string& params)
 {
-    auto data = nlohmann::json::parse(params);
-    std::cout << data.dump() << "\n";
-    auto type = data.at("type");
-    RecPtr rec = nullptr;
-    if (type == type::RTP) { //TODO create factory
-        rec = rec::create<rec::CRtpRecorder>(m_workDir, data.at("data"));
-    }
-    else if (type == type::URI) {
-        rec = rec::create<rec::CHtmlRecorder>(m_workDir, data.at("data"));
-    }
-    else {
-        return std::nullopt;
-    }
+    try {
+        auto data = nlohmann::json::parse(params);
+        std::cout << data.dump() << "\n";
+        auto type = data.at("type");
+        RecPtr rec = nullptr;
+        if (type == type::RTP) { //TODO create factory
+            rec = rec::create<rec::CRtpRecorder>(m_workDir, data.at("data"));
+        }
+        else if (type == type::URI) {
+            rec = rec::create<rec::CHtmlRecorder>(m_workDir, data.at("data"));
+        }
+        else {
+            return std::nullopt;
+        }
 
-    if (rec->start()) {
-        return add(std::move(rec));
+        if (rec->start()) {
+            return add(std::move(rec));
+        }
+        else {
+            return std::nullopt;
+        }
     }
-    else {
+    catch (nlohmann::json::exception& ex) {
+        std::cerr << "parse error at byte " << ex.what() << std::endl;
         return std::nullopt;
     }
 }
