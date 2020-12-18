@@ -23,22 +23,46 @@ std::map<rec::EncoderType, Encoder> ENCODERS = {
     { rec::EncoderType::VP8, { .m_video = "vp8enc target-bitrate={bitrate} overshoot=25 undershoot=100 deadline=33000 keyframe-max-dist=1", .m_audio = "vorbisenc", .m_muxer = "webmmux", .m_ext = "webm" } },
 };
 
-auto constexpr PIPELINE = "wpesrc location={uri} ! video/x-raw,framerate=30/1 ! queue max-size-bytes=0 ! videoconvert ! {videoEncoder} ! queue ! mux. "
-                          "{muxer} name=mux ! filesink location={location}.{extension} "
+auto constexpr RTMP_SINK = "vt. ! queue ! flvmux name=flv ! rtmp2sink location={} at. ! queue ! flv.";
+auto constexpr FILE_SINK = "vt. ! queue ! {muxer} name=mux ! filesink location={location}.{extension} at. ! queue ! mux.";
+
+auto constexpr PIPELINE = "wpesrc location={uri} ! video/x-raw,framerate=30/1 ! queue max-size-bytes=0 ! videoconvert ! {videoEncoder} ! tee name=vt "
                           "pulsesrc  ! audio/x-raw,format=S16LE,layout=interleaved,rate=48000,channels=2 ! "
-                          "queue max-size-bytes=0 max-size-buffers=0 max-size-time=10000000000 ! audioconvert ! audioresample ! {audioEncoder} ! queue ! mux.";
+                          "queue max-size-bytes=0 max-size-buffers=0 max-size-time=10000000000 ! audioconvert ! audioresample ! {audioEncoder} ! tee name=at "
+                          "{sink}";
 }
 
 namespace rec {
 
-std::string CHtmlRecorder::createCmd(Params params, const std::string&, const std::string& location)
+std::string CHtmlEncoder::createCmd(const Params& params, const std::string&, const std::string& location)
 {
-    std::string cmd = PIPELINE;
+    std::string rtmpSink {};
+    if ((params.mode != EncoderMode::RECORD) && (params.encoder != rec::EncoderType::H264)) {
+        return {};
+    }
+    else {
+        rtmpSink = fmt::format(RTMP_SINK, params.stream_uri);
+    }
+
     auto enc = ENCODERS.at(params.encoder);
+    auto fileSink = fmt::format(FILE_SINK, fmt::arg("muxer", enc.m_muxer), fmt::arg("location", location), fmt::arg("extension", enc.m_ext));
+
+    std::string sink {};
+    switch (params.mode) {
+    case (EncoderMode::STREAM):
+        sink = rtmpSink;
+        break;
+    case (EncoderMode::RECORD):
+        sink = fileSink;
+        break;
+    case (EncoderMode::BOTH):
+        sink = fmt::format("{} {}", rtmpSink, fileSink);
+        break;
+    }
+
     auto videoEncoder = fmt::format(enc.m_video, fmt::arg("bitrate", params.bitrate));
-    return fmt::format(cmd, fmt::arg("uri", params.uri), fmt::arg("audioEncoder", enc.m_audio),
-        fmt::arg("videoEncoder", videoEncoder), fmt::arg("muxer", enc.m_muxer), fmt::arg("location", location),
-        fmt::arg("extension", enc.m_ext));
+    return fmt::format(PIPELINE, fmt::arg("uri", params.uri), fmt::arg("audioEncoder", enc.m_audio),
+        fmt::arg("videoEncoder", videoEncoder), fmt::arg("sink", sink));
 }
 
 Pulse createPulseSink()
@@ -60,7 +84,7 @@ Pulse createPulseSink()
     return { .m_name = name, .m_id = id };
 }
 
-CHtmlRecorder::CHtmlRecorder(std::filesystem::path workdir, Params params)
+CHtmlEncoder::CHtmlEncoder(std::filesystem::path workdir, Params params)
     : IRecorder(std::move(workdir))
     , m_params(std::move(params))
     , m_pulse(createPulseSink())
@@ -68,7 +92,7 @@ CHtmlRecorder::CHtmlRecorder(std::filesystem::path workdir, Params params)
     setenv("recorder_service_pulse_device_name", m_pulse.m_name.c_str(), 1);
 }
 
-bool CHtmlRecorder::start()
+bool CHtmlEncoder::start()
 {
     std::unique_lock lock(m_mtx);
     if (m_pipeline && m_pipeline->isRunning()) {
@@ -77,11 +101,17 @@ bool CHtmlRecorder::start()
     auto file = genFilename();
     m_recVec.emplace_back(file);
     auto cmd = createCmd(m_params, m_pulse.m_name, file);
-    m_pipeline = std::make_unique<CPipeline>(cmd);
-    return m_pipeline->start();
+    try {
+        m_pipeline = std::make_unique<CPipeline>(cmd);
+        return m_pipeline->start();
+    }
+    catch (std::exception& ex) {
+        std::cout << fmt::format("Pipeline failed. Exception: {} \n", ex.what());
+        return false;
+    }
 }
 
-bool CHtmlRecorder::stop()
+bool CHtmlEncoder::stop()
 {
     std::unique_lock lock(m_mtx);
     if (!m_pipeline || (m_pipeline && !m_pipeline->isRunning())) {

@@ -40,7 +40,7 @@ std::optional<ID> CRecordManager::start(const std::string& params)
             rec = rec::create<rec::CRtpRecorder>(m_workDir, data.at("data"));
         }
         else if (type == type::URI) {
-            rec = rec::create<rec::CHtmlRecorder>(m_workDir, data.at("data"));
+            rec = rec::create<rec::CHtmlEncoder>(m_workDir, data.at("data"));
         }
         else {
             return std::nullopt;

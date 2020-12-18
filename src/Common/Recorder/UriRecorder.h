@@ -24,28 +24,38 @@ enum class EncoderType
 };
 NLOHMANN_JSON_SERIALIZE_ENUM(EncoderType, { { EncoderType::H264, "h264" }, { EncoderType::VP8, "vp8" } })
 
-class CHtmlRecorder : public IRecorder
+enum class EncoderMode
+{
+    RECORD,
+    STREAM,
+    BOTH
+};
+NLOHMANN_JSON_SERIALIZE_ENUM(EncoderMode, { { EncoderMode::RECORD, "record" }, { EncoderMode::STREAM, "stream" }, { EncoderMode::BOTH, "both" } })
+
+class CHtmlEncoder : public IRecorder
 {
 public:
     struct Params
     {
         int bitrate = 0;
         std::string uri {};
-        EncoderType encoder;
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params, bitrate, uri, encoder)
+        EncoderType encoder {EncoderType::H264};
+        EncoderMode mode {EncoderMode::RECORD};
+        std::string stream_uri;
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params, bitrate, uri, encoder, mode, stream_uri)
     };
 
-    explicit CHtmlRecorder(std::filesystem::path workdir, Params params);
+    explicit CHtmlEncoder(std::filesystem::path workdir, Params params);
     bool start() override;
     bool stop() override;
-    ~CHtmlRecorder() override = default;
+    ~CHtmlEncoder() override = default;
 
 private:
-    std::string createCmd(Params, const std::string& pulseName, const std::string& location);
+    static std::string createCmd(const Params&, const std::string& pulseName, const std::string& location);
     Params m_params;
     const Pulse m_pulse;
 };
 
-}
+} //namespace rec
 
 #endif //RECORDER_SERVICE_HTML_RECORDER_H
