@@ -37,7 +37,7 @@ return:
   `"mode":"both"`  
   
 
-- stop recording:  
+- stop recordings / rtmp streaming:  
 `curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"id":1}' -X POST http://127.0.0.1:34568/api/stop`  
 return:  
 `{"status":"stopped"}`
