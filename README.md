@@ -21,7 +21,7 @@ return:
 `{"status":"started"}`
 
 - start html recordings / rtmp streaming:
-`curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"encoder":"h264",bitrate":6000,"uri":"https://videojs.github.io/autoplay-tests/plain/attr/autoplay.html","stream_uri":"rtmp://b.rtmp.youtube.com/live2/xxxx-xxxx-xxxx-xxxx-xxxx","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start`  
+`curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"encoder":"h264","bitrate":6000,"uri":"https://videojs.github.io/autoplay-tests/plain/attr/autoplay.html","stream_uri":"rtmp://b.rtmp.youtube.com/live2/xxxx-xxxx-xxxx-xxxx-xxxx","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start`  
 return:  
 `{"status":"started"}`  
 
