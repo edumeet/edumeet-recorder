@@ -1,0 +1,18 @@
+diff --git a/ext/wpe/WPEThreadedView.cpp b/ext/wpe/WPEThreadedView.cpp
+index de05e3c83..e52f6ef1c 100644
+--- a/ext/wpe/WPEThreadedView.cpp
++++ b/ext/wpe/WPEThreadedView.cpp
+@@ -258,6 +258,13 @@ WPEView::WPEView(WebKitWebContext* web_context, GstWpeSrc* src, GstGLContext* co
+     g_signal_connect(webkit.view, "load-failed", G_CALLBACK(s_loadFailed), src);
+     g_signal_connect(webkit.view, "load-failed-with-tls-errors", G_CALLBACK(s_loadFailedWithTLSErrors), src);
+ 
++    auto* settings = webkit_settings_new_with_settings(
++         "enable-webgl", TRUE,
++         "enable-media-stream", TRUE,
++         "enable-encrypted-media", TRUE,
++         nullptr);
++    g_object_set(G_OBJECT(webkit.view), "settings", settings, NULL);
++
+     gst_wpe_src_configure_web_view(src, webkit.view);
+ 
+     const gchar* location;
