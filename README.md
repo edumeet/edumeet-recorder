@@ -6,6 +6,70 @@
 - run the image (`--network=host` will be removed soon):  
 `docker run -v /tmp:/records --rm -it --network=host edumeet-recorder`
 
+**Example usage:**
+
+- Session 1:
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"encoder":"h264","bitrate":6000,"uri":"https://letsmeet.no/roomname?headless=true&displayName=recorder","stream_uri":"","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start
+HTTP/1.1 200 OK
+Content-Length: 20
+Content-Type: application/json
+
+{"status":"started"}
+
+- Session 2:
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"encoder":"h264","bitrate":6000,"uri":"https://letsmeet.no/roomname?headless=true&displayName=recorder","stream_uri":"","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start
+HTTP/1.1 200 OK
+Content-Length: 20
+Content-Type: application/json
+
+{"status":"started"}
+
+- Status:
+
+url -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://127.0.0.1:34568/api/status
+HTTP/1.1 200 OK
+Content-Length: 75
+Content-Type: application/json
+
+[{"id":1,"records":[],"running":true},{"id":2,"records":[],"running":true}]
+
+- Stop:
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"id":1}' -X POST http://127.0.0.1:34568/api/stop
+HTTP/1.1 200 OK
+Content-Length: 20
+Content-Type: application/json
+
+{"status":"stopped"}
+
+- Status:
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://127.0.0.1:34568/api/status
+HTTP/1.1 200 OK
+Content-Length: 109
+Content-Type: application/json
+
+[{"id":1,"records":["/records/2021-09-22_07:56:00__0"],"running":false},{"id":2,"records":[],"running":true}]
+
+Stop 2:
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"id":2}' -X POST http://127.0.0.1:34568/api/stop
+HTTP/1.1 200 OK
+Content-Length: 20
+Content-Type: application/json
+
+{"status":"stopped"}
+
+- Status 2:
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://127.0.0.1:34568/api/status
+HTTP/1.1 200 OK
+Content-Length: 143
+Content-Type: application/json
+
+[{"id":1,"records":["/records/2021-09-22_07:56:00__0"],"running":false},{"id":2,"records":["/records/2021-09-22_07:57:58__1"],"running":false}]
 
 **recorder-service API:**
 
