@@ -3,14 +3,16 @@
 - build the image:  
 `docker build -t edumeet-recorder .`
 
-- run the image (`--network=host` will be removed soon):  
-`docker run -v /tmp:/records --rm -it --network=host edumeet-recorder`
+- run the image:  
+`xhost +`  
+`docker run -v /tmp:/records --rm -it --network=host -e DISPLAY=$DISPLAY edumeet-recorder`
 
 **Example usage:**
 
 - Session 1:
 
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"encoder":"h264","bitrate":6000,"uri":"https://letsmeet.no/roomname?headless=true&displayName=recorder","stream_uri":"","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start
+
 HTTP/1.1 200 OK
 Content-Length: 20
 Content-Type: application/json
@@ -19,7 +21,8 @@ Content-Type: application/json
 
 - Session 2:
 
-curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"encoder":"h264","bitrate":6000,"uri":"https://letsmeet.no/roomname?headless=true&displayName=recorder","stream_uri":"","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"encoder":"h264","bitrate":6000,"uri":"https://letsmeet.no/roomname?headless=true&displayName=recorder","stream_uri":"","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start  
+
 HTTP/1.1 200 OK
 Content-Length: 20
 Content-Type: application/json
@@ -28,7 +31,8 @@ Content-Type: application/json
 
 - Status:
 
-url -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://127.0.0.1:34568/api/status
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://127.0.0.1:34568/api/status  
+
 HTTP/1.1 200 OK
 Content-Length: 75
 Content-Type: application/json
@@ -37,7 +41,8 @@ Content-Type: application/json
 
 - Stop:
 
-curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"id":1}' -X POST http://127.0.0.1:34568/api/stop
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"id":1}' -X POST http://127.0.0.1:34568/api/stop  
+
 HTTP/1.1 200 OK
 Content-Length: 20
 Content-Type: application/json
@@ -46,7 +51,8 @@ Content-Type: application/json
 
 - Status:
 
-curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://127.0.0.1:34568/api/status
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://127.0.0.1:34568/api/status  
+
 HTTP/1.1 200 OK
 Content-Length: 109
 Content-Type: application/json
@@ -55,7 +61,8 @@ Content-Type: application/json
 
 Stop 2:
 
-curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"id":2}' -X POST http://127.0.0.1:34568/api/stop
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"id":2}' -X POST http://127.0.0.1:34568/api/stop  
+
 HTTP/1.1 200 OK
 Content-Length: 20
 Content-Type: application/json
@@ -64,7 +71,8 @@ Content-Type: application/json
 
 - Status 2:
 
-curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://127.0.0.1:34568/api/status
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://127.0.0.1:34568/api/status  
+
 HTTP/1.1 200 OK
 Content-Length: 143
 Content-Type: application/json

@@ -14,11 +14,14 @@ SCENARIO("Recorder html start/stop test")
 
     nlohmann::json params_json = R"({
     "bitrate": 3000,
-    "uri": "https://google.com"
+    "uri": "https://google.com",
+    "encoder":"h264",
+    "mode":"record",
+    "stream_uri":""
     })"_json;
 
-    auto params = params_json.get<CHtmlRecorder::Params>();
-    CHtmlRecorder recorder("/tmp/ABCdefGHI_rec_test", params);
+    auto params = params_json.get<CHtmlEncoder::Params>();
+    CHtmlEncoder recorder("/tmp/ABCdefGHI_rec_test", params);
     CHECK(recorder.stop());
     CHECK(recorder.start());
 

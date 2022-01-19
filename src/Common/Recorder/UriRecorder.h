@@ -1,7 +1,7 @@
 /* Copyright (C) 2020
  *
  * Authors: TT Wojciech Kapsa
-*/
+ */
 
 #ifndef RECORDER_SERVICE_HTML_RECORDER_H
 #define RECORDER_SERVICE_HTML_RECORDER_H
@@ -10,13 +10,6 @@
 #include <nlohmann/json.hpp>
 
 namespace rec {
-
-struct Pulse
-{
-    std::string m_name;
-    std::string m_id;
-};
-
 enum class EncoderType
 {
     H264,
@@ -39,8 +32,8 @@ public:
     {
         int bitrate = 0;
         std::string uri {};
-        EncoderType encoder {EncoderType::H264};
-        EncoderMode mode {EncoderMode::RECORD};
+        EncoderType encoder { EncoderType::H264 };
+        EncoderMode mode { EncoderMode::RECORD };
         std::string stream_uri;
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params, bitrate, uri, encoder, mode, stream_uri)
     };
@@ -51,11 +44,10 @@ public:
     ~CHtmlEncoder() override = default;
 
 private:
-    static std::string createCmd(const Params&, const std::string& pulseName, const std::string& location);
+    static std::string createCmd(const Params&, const std::string& location);
     Params m_params;
-    const Pulse m_pulse;
 };
 
-} //namespace rec
+} // namespace rec
 
-#endif //RECORDER_SERVICE_HTML_RECORDER_H
+#endif // RECORDER_SERVICE_HTML_RECORDER_H
