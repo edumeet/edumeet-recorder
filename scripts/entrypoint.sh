@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-/build/bin/edumeet-recorder
+xvfb-run --server-args="-screen 0 1920x1080x30" /build/bin/edumeet-recorder
