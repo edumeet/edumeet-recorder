@@ -1,4 +1,46 @@
-**installation**
+# eduMeet Recorder
+
+## Getting started
+
+For example, given that you have the following URI:
+ * https://letsmeet.no/test-edumeet-recorder
+
+Steps to run the minimal example are:
+
+  1. `git clone https://github.com/edumeet/edumeet-recorder.git`
+  2. `cd edumeet-recorder`
+  3. `docker build -t edumeet-recorder .` (few minutes to half an hour building)
+  4. `docker run -v /tmp:/records --rm -it --network=host edumeet-recorder`
+  5. Open in browser: https://letsmeet.no/test-edumeet-recorder
+  6. Use curl to start recording:
+```
+curl
+  -i \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+    --data '{"type":"uri", \
+                 "data":{"encoder":"h264", \
+                "bitrate":6000, \
+                "uri":"https://letsmeet.no/test-edumeet-recorder?headless=true&displayName=recorder", \
+                "stream_uri":"","mode":"record"}}' \
+  -X POST http://127.0.0.1:34568/api/start
+```
+  7. Use curl stop to stop recording:
+```
+curl
+  -i \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+    --data '{"id":1}' \
+  -X POST http://127.0.0.1:34568/api/stop
+```
+
+Notes:
+ * `headless=true` -- is used to skip the login/user/landing screen for eduMeet (a temporary hack)
+
+## More examples and explanation
+
+### Installation
 
 - build the image:  
 `docker build -t edumeet-recorder .`
@@ -6,7 +48,7 @@
 - run the image:  
 `docker run -v /tmp:/records --rm -it --network=host edumeet-recorder`
 
-**Example usage:**
+### Example usage
 
 - Session 1:
 
@@ -78,7 +120,7 @@ Content-Type: application/json
 
 [{"id":1,"records":["/records/2021-09-22_07:56:00__0"],"running":false},{"id":2,"records":["/records/2021-09-22_07:57:58__1"],"running":false}]
 
-**recorder-service API:**
+### Recorder-service API
 
 - get status:  
 `curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://127.0.0.1:34568/api/status`  
