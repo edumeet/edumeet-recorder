@@ -14,7 +14,7 @@ Steps to run the minimal example are:
   5. Open in browser: https://letsmeet.no/test-edumeet-recorder
   6. Use curl to start recording:
 ```
-curl
+curl \
   -i \
   -H "Accept: application/json" \
   -H "Content-Type: application/json" \
@@ -27,7 +27,7 @@ curl
 ```
   7. Use curl stop to stop recording:
 ```
-curl
+curl \
   -i \
   -H "Accept: application/json" \
   -H "Content-Type: application/json" \
