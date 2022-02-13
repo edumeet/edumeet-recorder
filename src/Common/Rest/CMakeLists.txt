@@ -8,4 +8,4 @@ set(SRC
         )
 
 add_library(${PROJECT_NAME} ${SRC})
-target_link_libraries(${PROJECT_NAME} cpprestsdk::cpprest)
+target_link_libraries(${PROJECT_NAME} cpprestsdk::cpprest -lssl -lcrypto)

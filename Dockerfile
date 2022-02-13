@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:21.04
 COPY scripts /
 RUN ./install.sh
 ENV GST_PLUGIN_PATH=/usr/local

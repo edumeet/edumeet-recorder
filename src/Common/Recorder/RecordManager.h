@@ -9,6 +9,7 @@
 #include <boost/serialization/strong_typedef.hpp>
 #include <nlohmann/json.hpp>
 #include <filesystem>
+#include <optional>
 #include <map>
 #include <memory>
 #include <mutex>
