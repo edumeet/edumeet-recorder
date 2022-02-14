@@ -4,27 +4,16 @@
  */
 
 #include "UriRecorder.h"
-#include <boost/process.hpp>
 #include <fmt/core.h>
 #include <iomanip>
 #include <iostream>
 #include <utility>
 namespace {
-struct Encoder
-{
-    std::string m_video;
-    std::string m_audio;
-    std::string m_muxer;
-    std::string m_ext;
-};
+auto constexpr VIDEO_ENCODER = "x264enc speed-preset=superfast tune=zerolatency key-int-max=60 bitrate={bitrate} ! video/x-h264,profile=baseline";
+auto constexpr AUDIO_ENCODER = "avenc_aac bitrate=256000";
 
-std::map<rec::EncoderType, Encoder> ENCODERS = {
-    { rec::EncoderType::H264, { .m_video = "x264enc speed-preset=superfast tune=zerolatency key-int-max=60 bitrate={bitrate} ! video/x-h264,profile=baseline", .m_audio = "avenc_aac bitrate=256000", .m_muxer = "mp4mux faststart=true", .m_ext = "mp4" } },
-    { rec::EncoderType::VP8, { .m_video = "vp8enc target-bitrate={bitrate} overshoot=25 undershoot=100 deadline=33000 keyframe-max-dist=1", .m_audio = "vorbisenc", .m_muxer = "webmmux", .m_ext = "webm" } },
-};
-
-auto constexpr RTMP_SINK = "vt. ! queue ! flvmux name=flv ! rtmp2sink location={} at. ! queue ! flv.";
-auto constexpr FILE_SINK = "vt. ! queue ! {muxer} name=mux ! filesink location={location}.{extension} at. ! queue ! mux.";
+auto constexpr RTMP_SINK = "vt. ! queue ! h264parse ! flvmux streamable=true name=flv ! rtmp2sink location={} at. ! queue ! aacparse ! flv.";
+auto constexpr FILE_SINK = "vt. ! queue ! mpegtsmux name=mux ! filesink location={location}.ts at. ! queue ! mux.";
 
 auto constexpr PIPELINE = "cefbin name=cef cefsrc::url={uri} cef.video ! video/x-raw,width=1920,height=1080,framerate=30/1 ! "
                           "queue max-size-bytes=0 max-size-buffers=0 max-size-time=3000000000 ! videoconvert ! {videoEncoder} ! tee name=vt "
@@ -39,17 +28,8 @@ namespace rec {
 
 std::string CHtmlEncoder::createCmd(const Params& params, const std::string& location)
 {
-    std::string rtmpSink {};
-    if ((params.mode != EncoderMode::RECORD) && (params.encoder != rec::EncoderType::H264)) {
-        return {};
-    }
-    else {
-        rtmpSink = fmt::format(RTMP_SINK, params.stream_uri);
-    }
-
-    auto enc = ENCODERS.at(params.encoder);
-    // auto fileSink = fmt::format(FILE_SINK, fmt::arg("muxer", enc.m_muxer), fmt::arg("location", location), fmt::arg("extension", enc.m_ext));
-    auto fileSink = fmt::format(FILE_SINK, fmt::arg("muxer", "mpegtsmux"), fmt::arg("location", location), fmt::arg("extension", "ts")); // TODO convert to mp4 if needed
+    const auto rtmpSink = fmt::format(RTMP_SINK, params.stream_uri);
+    const auto fileSink = fmt::format(FILE_SINK, fmt::arg("location", location)); // TODO convert to mp4 if needed
 
     std::string sink {};
     switch (params.mode) {
@@ -64,8 +44,8 @@ std::string CHtmlEncoder::createCmd(const Params& params, const std::string& loc
         break;
     }
 
-    auto videoEncoder = fmt::format(enc.m_video, fmt::arg("bitrate", params.bitrate));
-    return fmt::format(PIPELINE, fmt::arg("uri", params.uri), fmt::arg("audioEncoder", enc.m_audio),
+    auto videoEncoder = fmt::format(VIDEO_ENCODER, fmt::arg("bitrate", params.bitrate));
+    return fmt::format(PIPELINE, fmt::arg("uri", params.uri), fmt::arg("audioEncoder", AUDIO_ENCODER),
         fmt::arg("videoEncoder", videoEncoder), fmt::arg("sink", sink));
 }
 

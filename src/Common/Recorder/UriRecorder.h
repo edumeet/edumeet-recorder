@@ -10,13 +10,6 @@
 #include <nlohmann/json.hpp>
 
 namespace rec {
-enum class EncoderType
-{
-    H264,
-    VP8
-};
-NLOHMANN_JSON_SERIALIZE_ENUM(EncoderType, { { EncoderType::H264, "h264" }, { EncoderType::VP8, "vp8" } })
-
 enum class EncoderMode
 {
     RECORD,
@@ -32,10 +25,9 @@ public:
     {
         int bitrate = 0;
         std::string uri {};
-        EncoderType encoder { EncoderType::H264 };
         EncoderMode mode { EncoderMode::RECORD };
         std::string stream_uri;
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params, bitrate, uri, encoder, mode, stream_uri)
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Params, bitrate, uri, mode, stream_uri)
     };
 
     explicit CHtmlEncoder(std::filesystem::path workdir, Params params);

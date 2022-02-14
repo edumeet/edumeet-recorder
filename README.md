@@ -19,8 +19,7 @@ curl \
   -H "Accept: application/json" \
   -H "Content-Type: application/json" \
     --data '{"type":"uri", \
-                 "data":{"encoder":"h264", \
-                "bitrate":6000, \
+                 "data":{"bitrate":6000, \
                 "uri":"https://letsmeet.no/test-edumeet-recorder?headless=true&displayName=recorder", \
                 "stream_uri":"","mode":"record"}}' \
   -X POST http://127.0.0.1:34568/api/start
@@ -52,7 +51,7 @@ Notes:
 
 - Session 1:
 
-`curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"encoder":"h264","bitrate":6000,"uri":"https://letsmeet.no/roomname?headless=true&displayName=recorder","stream_uri":"","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start`
+`curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"bitrate":6000,"uri":"https://letsmeet.no/roomname?headless=true&displayName=recorder","stream_uri":"","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start`
 
 HTTP/1.1 200 OK
 Content-Length: 20
@@ -62,7 +61,7 @@ Content-Type: application/json
 
 - Session 2:
 
-`curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"encoder":"h264","bitrate":6000,"uri":"https://letsmeet.no/roomname?headless=true&displayName=recorder","stream_uri":"","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start`  
+`curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"bitrate":6000,"uri":"https://letsmeet.no/roomname?headless=true&displayName=recorder","stream_uri":"","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start`  
 
 HTTP/1.1 200 OK
 Content-Length: 20
@@ -134,16 +133,11 @@ return:
 `{"status":"started"}`
 
 - start html recordings / rtmp streaming:
-`curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"encoder":"h264","bitrate":6000,"uri":"https://videojs.github.io/autoplay-tests/plain/attr/autoplay.html","stream_uri":"rtmp://b.rtmp.youtube.com/live2/xxxx-xxxx-xxxx-xxxx-xxxx","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start`  
+`curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"bitrate":6000,"uri":"https://videojs.github.io/autoplay-tests/plain/attr/autoplay.html","stream_uri":"rtmp://b.rtmp.youtube.com/live2/xxxx-xxxx-xxxx-xxxx-xxxx","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start`  
 return:  
 `{"status":"started"}`  
 
-
-  possible encoders value:  
-  `"encoder":"h264"`  
-  `"encoder":"vp8"`  
-
-  
+    
   possible mode value:  
   `"mode":"record"`  
   `"mode":"stream"`  
