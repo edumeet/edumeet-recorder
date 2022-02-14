@@ -19,7 +19,7 @@ struct Encoder
 };
 
 std::map<rec::EncoderType, Encoder> ENCODERS = {
-    { rec::EncoderType::H264, { .m_video = "x264enc speed-preset=superfast tune=zerolatency key-int-max=60 bitrate={bitrate} ! video/x-h264,profile=baseline", .m_audio = "avenc_aac bitrate=256000", .m_muxer = "mp4mux faststart=true", .m_ext = "mp4" } },
+    { rec::EncoderType::H264, { .m_video = "x264enc speed-preset=superfast key-int-max=60 bitrate={bitrate} ! video/x-h264,profile=baseline", .m_audio = "avenc_aac", .m_muxer = "mp4mux faststart=true", .m_ext = "mp4" } },
     { rec::EncoderType::VP8, { .m_video = "vp8enc target-bitrate={bitrate} overshoot=25 undershoot=100 deadline=33000 keyframe-max-dist=1", .m_audio = "vorbisenc", .m_muxer = "webmmux", .m_ext = "webm" } },
 };
 
