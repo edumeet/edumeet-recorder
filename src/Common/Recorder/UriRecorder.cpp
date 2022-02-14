@@ -9,7 +9,7 @@
 #include <iostream>
 #include <utility>
 namespace {
-auto constexpr VIDEO_ENCODER = "x264enc speed-preset=superfast tune=zerolatency key-int-max=60 bitrate={bitrate} ! video/x-h264,profile=baseline";
+auto constexpr VIDEO_ENCODER = "x264enc speed-preset=superfast key-int-max=60 bitrate={bitrate} ! video/x-h264,profile=baseline";
 auto constexpr AUDIO_ENCODER = "avenc_aac bitrate=256000";
 
 auto constexpr RTMP_SINK = "vt. ! queue ! h264parse ! flvmux streamable=true name=flv ! rtmp2sink location={} at. ! queue ! aacparse ! flv.";
