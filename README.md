@@ -57,7 +57,7 @@ HTTP/1.1 200 OK
 Content-Length: 20
 Content-Type: application/json
 
-{"status":"started"}
+{"id":1,"status":"started"}
 
 - Session 2:
 
@@ -67,7 +67,7 @@ HTTP/1.1 200 OK
 Content-Length: 20
 Content-Type: application/json
 
-{"status":"started"}
+{"id":2,"status":"started"}
 
 - Status:
 

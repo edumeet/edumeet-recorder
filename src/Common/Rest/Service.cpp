@@ -69,6 +69,7 @@ void CService::handlePost(http_request message)
         if (id.has_value()) {
             auto response = json::value::object();
             response["status"] = json::value::string("started");
+            response["id"] = json::value::number(id.value());
             message.reply(status_codes::OK, response);
             return;
         }
