@@ -9,13 +9,13 @@
 #include <iostream>
 #include <utility>
 namespace {
-auto constexpr VIDEO_ENCODER = "x264enc speed-preset=superfast key-int-max=60 bitrate={bitrate} ! video/x-h264,profile=baseline";
+auto constexpr VIDEO_ENCODER = "x264enc speed-preset=ultrafast key-int-max=60 bitrate={bitrate} ! video/x-h264,profile=baseline";
 auto constexpr AUDIO_ENCODER = "avenc_aac bitrate=256000";
 
 auto constexpr RTMP_SINK = "vt. ! queue ! h264parse ! flvmux streamable=true name=flv ! rtmp2sink location={} at. ! queue ! aacparse ! flv.";
 auto constexpr FILE_SINK = "vt. ! queue ! mpegtsmux name=mux ! filesink location={location}.ts at. ! queue ! mux.";
 
-auto constexpr PIPELINE = "cefbin name=cef cefsrc::url={uri} cef.video ! video/x-raw,width=1920,height=1080,framerate=30/1 ! "
+auto constexpr PIPELINE = "cefbin name=cef cefsrc::url={uri} cef.video ! video/x-raw,width=1920,height=1080,framerate=25/1 ! "
                           "queue max-size-bytes=0 max-size-buffers=0 max-size-time=3000000000 ! videoconvert ! {videoEncoder} ! tee name=vt "
                           "audiotestsrc do-timestamp=true is-live=true volume=0.0 ! audiomixer name=mix ! "
                           "queue max-size-bytes=0 max-size-buffers=0 max-size-time=3000000000 ! "
