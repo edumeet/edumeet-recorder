@@ -8,9 +8,8 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install sudo git build-essential apt-u
 pip3 install meson ninja
 
 cd /tmp &&
-git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git && \
+git clone --branch 1.20 --depth 1 https://gitlab.freedesktop.org/gstreamer/gstreamer.git && \
 cd  gstreamer && \
-git checkout 1.20.0 && \
 meson --buildtype release \
     -Dgtk_doc=disabled \
     -Ddoc=disabled \
@@ -36,7 +35,7 @@ cd gstcefsrc && mkdir build && cd build && \
 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release .. && \
 make -j4 && make install
  
-cd /tmp/ && git clone --branch v3.9.1 https://github.com/nlohmann/json.git && cd json && meson build && ninja -C build install
+cd /tmp/ && git clone --branch v3.10.5 https://github.com/nlohmann/json.git && cd json && meson build && ninja -C build install
    
 cd /tmp && git clone https://github.com/catchorg/Catch2.git && cd Catch2 && git checkout v2.13.0 && cmake -Bbuild -H. -DBUILD_TESTING=OFF && sudo cmake --build build/ --target install
     
