@@ -14,24 +14,11 @@ Steps to run the minimal example are:
   5. Open in browser: https://letsmeet.no/test-edumeet-recorder
   6. Use curl to start recording:
 ```
-curl \
-  -i \
-  -H "Accept: application/json" \
-  -H "Content-Type: application/json" \
-    --data '{"type":"uri", \
-                 "data":{"bitrate":6000, \
-                "uri":"https://letsmeet.no/test-edumeet-recorder?headless=true&displayName=recorder", \
-                "stream_uri":"","mode":"record"}}' \
-  -X POST http://127.0.0.1:34568/api/start
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"type":"uri", "data":{"bitrate":6000, "uri":"https://letsmeet.no/test-edumeet-recorder?headless=true&displayName=recorder", "stream_uri":"","mode":"record"}}' -X POST http://127.0.0.1:34568/api/start
 ```
   7. Use curl stop to stop recording:
 ```
-curl \
-  -i \
-  -H "Accept: application/json" \
-  -H "Content-Type: application/json" \
-    --data '{"id":1}' \
-  -X POST http://127.0.0.1:34568/api/stop
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" --data '{"id":1}' -X POST http://127.0.0.1:34568/api/stop
 ```
 
 Notes:
