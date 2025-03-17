@@ -3,12 +3,16 @@ set -e
 set -o pipefail
 
 apt-get update && \
-DEBIAN_FRONTEND=noninteractive apt-get -y install sudo git build-essential apt-utils x264 cmake libcpprest-dev libfmt-dev libnss3-dev libcups2-dev libxdamage-dev libxcomposite-dev libatk1.0-dev libatk-bridge2.0-dev libxkbcommon-dev libxrandr-dev libgbm-dev libasound2-dev xvfb python3-pip bison flex
+DEBIAN_FRONTEND=noninteractive apt-get -y install sudo git build-essential apt-utils x264 libcpprest-dev libfmt-dev libnss3-dev libcups2-dev \
+libxdamage-dev libxcomposite-dev libatk1.0-dev libatk-bridge2.0-dev libxkbcommon-dev libxrandr-dev libgbm-dev libasound2-dev xvfb python3-pip bison flex
+
+pip3 install cmake --upgrade
 
 pip3 install meson ninja
+ldconfig
 
 cd /tmp &&
-git clone --branch 1.20 --depth 1 https://gitlab.freedesktop.org/gstreamer/gstreamer.git && \
+git clone --branch 1.22 https://gitlab.freedesktop.org/gstreamer/gstreamer.git && \
 cd  gstreamer && \
 meson --buildtype release \
     -Dgtk_doc=disabled \
@@ -40,4 +44,3 @@ cd /tmp/ && git clone --branch v3.10.5 https://github.com/nlohmann/json.git && c
 cd /tmp && git clone https://github.com/catchorg/Catch2.git && cd Catch2 && git checkout v2.13.0 && cmake -Bbuild -H. -DBUILD_TESTING=OFF && sudo cmake --build build/ --target install
     
 rm -rf /tmp/*
-
